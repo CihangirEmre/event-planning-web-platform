@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <style>
+        /* Genel Stil */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #89f7fe, #66a6ff); /* Yumuşak geçişli arka plan */
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.9); /* Hafif beyaz opak kutu */
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: #444;
+        }
+
+        button {
+            display: block;
+            margin: 0.5rem auto;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            button:active {
+                transform: translateY(2px);
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Paneli</h1>
+        <button onclick="location.href='@Url.Action("KullanıcıYönetimi", "Admin")'">Kullanıcı Yönetimi</button>
+        <button onclick="location.href='@Url.Action("EtkinlikYönetimi", "Admin")'">Etkinlik Yönetimi</button>
+    </div>
+</body>
+</html>

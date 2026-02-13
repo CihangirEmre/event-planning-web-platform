@@ -1,0 +1,114 @@
+﻿@model EventPlannerProject.Models.Etkinlik
+
+@{
+    ViewData["Title"] = "Etkinlik Detayları";
+}
+
+<div class="event-container">
+    <h2 class="event-title">@Model.EtkinlikAdi</h2>
+
+    <div class="event-details">
+        <p><strong>Açıklama:</strong> @Model.Aciklama</p>
+        <p><strong>Tarih:</strong> @Model.Tarih.ToString("dd MMM yyyy")</p>
+        <p><strong>Saat:</strong> @Model.Saat</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Konum))
+    {
+        <div class="event-location">
+            <p><strong>Konum:</strong> @Model.Konum</p>
+            <a href="https://www.google.com/maps/dir/?api=1&origin=Istanbul+Maltepe&destination=@Uri.EscapeDataString(Model.Konum)" target="_blank" class="btn btn-link">
+                Yol Tarifi Al
+            </a>
+        </div>
+    }
+
+    <!-- Display Map -->
+    <div id="map-@Model.ID" class="event-map" style="height: 300px; width: 100%;"></div>
+
+    <!-- Katıl Button -->
+    <div class="event-actions">
+        <form method="post" asp-action="JoinEvent" asp-route-id="@Model.ID">
+            <button type="submit" class="btn btn-primary">Etkinliğe Katıl</button>
+        </form>
+        <a href="@Url.Action("MainPage", "User")" class="btn btn-secondary">Anasayfaya Geri Dön</a>
+    </div>
+</div>
+
+<!-- Add custom styles -->
+<style>
+    .event-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-title {
+        font-size: 2.5em;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .event-details {
+        margin-bottom: 20px;
+    }
+
+        .event-details p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+    .event-location {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .btn-link {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .event-map {
+        margin-top: 20px;
+        border-radius: 8px;
+    }
+
+    .event-actions {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 10px 20px;
+        font-size: 1.1em;
+        margin: 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+</style>

@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Kullanıcı Girişi";
+}
+
+<div class="login-container">
+    <h2>Giriş Yap</h2>
+
+    <!-- Kullanıcı Girişi Formu -->
+    <form method="post" action="/Account/LoginPost">
+        <div class="form-group">
+            <label for="username">Kullanıcı Adı</label>
+            <input type="text" id="username" name="username" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Şifre</label>
+            <input type="password" id="password" name="password" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Giriş Yap</button>
+    </form>
+
+    <!-- Yeni Hesap Oluştur ve Şifre Sıfırlama Linkleri -->
+    <div class="additional-options">
+        <p>Hesabınız yok mu? <a href="/Account/Register">Kayıt Ol</a></p>
+        <p>Şifrenizi mi unuttunuz? <a href="/Account/ForgotPassword">Şifre Sıfırla</a></p>
+    </div>
+</div>
+
+<!-- Stil Özellikleri -->
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: auto;
+        padding: 2em;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 1.5em;
+    }
+
+    .form-group {
+        margin-bottom: 1em;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.5em;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 0.5em;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        font-size: 1em;
+        border-radius: 4px;
+    }
+
+    .additional-options {
+        text-align: center;
+        margin-top: 1.5em;
+    }
+
+    .additional-options a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .additional-options a:hover {
+        text-decoration: underline;
+    }
+</style>

@@ -1,0 +1,20 @@
+# Build
+bin/
+obj/
+
+# User files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# VS
+.vs/
+
+# Node
+node_modules/
+build/
+
+# Environment
+.env

@@ -1,0 +1,36 @@
+﻿
+@if (ViewBag.ErrorMessage != null)
+{
+    <p style="color:red;">@ViewBag.ErrorMessage</p>
+}
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+<table>
+    <thead>
+        <tr>
+            <th>Kullanıcı Adı</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var kullanıcı in Model)
+        {
+            <tr>
+                <td>@kullanıcı.KullanıcıAdi</td>
+                <td>@kullanıcı.Ad</td>
+                <td>@kullanıcı.Soyad</td>
+                <td>
+                    <form method="post" action="@Url.Action("SilKullanıcı", "Admin")">
+                        <input type="hidden" name="id" value="@kullanıcı.ID" />
+                        <button type="submit">Sil</button>
+                    </form>
+                    <button onclick="location.href='@Url.Action("KullanıcıDetayı", "Admin", new { id = kullanıcı.ID })'">Detay</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,381 @@
+﻿@model EventPlannerProject.Models.MainPageViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anasayfa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #1D2D44;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+            header h1 {
+                margin: 0;
+                font-size: 24px;
+            }
+
+            header p {
+                margin: 5px 0;
+                font-size: 14px;
+                color: #bbb;
+            }
+
+        .profile-photo {
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            color: #1D2D44;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        section {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .accordion {
+            margin-top: 20px;
+        }
+
+        .accordion-item {
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-header {
+            background-color: #1D2D44;
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 8px 8px 0 0;
+        }
+
+            .accordion-header:hover {
+                background-color: #16334a;
+            }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #f7f7f7;
+            color: #444;
+            border-top: 1px solid #ddd;
+        }
+
+        footer {
+            background-color: #1D2D44;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .no-events {
+            font-size: 16px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function toggleAccordion(id) {
+            var content = document.getElementById('accordion-content-' + id);
+            var allContents = document.querySelectorAll('.accordion-content');
+            allContents.forEach(function (el) {
+                if (el !== content) {
+                    el.style.display = 'none'; // Close other accordion items
+                }
+            });
+            content.style.display = content.style.display === 'block' ? 'none' : 'block'; // Toggle clicked accordion
+        }
+
+        window.initMap = function() {
+        @foreach (var etkinlik in Model.Etkinlikler.Where(e => e.IlgiAlanID.HasValue
+           && Model.KullaniciIlgiAlani.Select(k => (int?)k.IlgiAlanID).Contains(e.IlgiAlanID)))
+        {
+            <text>
+                        (function() {
+                        var eventLocation = '@etkinlik.Konum';
+                        var mapElement = document.getElementById('map-attended-@etkinlik.ID');
+
+                        if (eventLocation && mapElement) {
+                            var map = new google.maps.Map(mapElement, {
+                            zoom: 12,
+                        center: {lat: 40.9787, lng: 29.1952 } // Varsayılan İstanbul konumu
+                            });
+
+                        var geocoder = new google.maps.Geocoder();
+
+                        // Etkinlik konumunu geocode et ve haritaya ekle
+                        geocoder.geocode({'address': eventLocation }, function (results, status) {
+                                if (status === 'OK') {
+                                    var marker = new google.maps.Marker({
+                            map: map,
+                        position: results[0].geometry.location
+                                    });
+                        map.setCenter(results[0].geometry.location);
+                                } else {
+                            console.error('Geocode başarısız oldu: ' + status);
+                                }
+                            });
+                        }
+                    })();
+            </text>
+        }
+    }
+
+        // Initialize the map when the window loads
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Hoşgeldiniz, @Model.Kullanici.Ad @Model.Kullanici.Soyad!</h1>
+            <p>@Model.Kullanici.Email</p>
+            <p>@Model.Kullanici.Konum</p>
+            <p><strong>Toplam Puanınız:</strong> @Model.ToplamPuan</p>
+        </div>
+        <a href="@Url.Action("Profile", "User")">
+    @if (Model.ProfilFoto != null && Model.ProfilFoto.Length > 0)
+    {
+        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ProfilFoto)" alt="Profil Fotoğrafı" class="profile-photo" />
+    }
+    else
+    {
+        <div class="profile-photo">P</div>
+    }
+</a>
+
+    </header>
+    <!-- Bildirim Alanı -->
+    @if (TempData["Notification"] != null)
+    {
+        <section style="max-width: 900px; margin: 20px auto; padding: 10px; background-color: #fff5c4; border: 1px solid #ffd700; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+            <p style="margin: 0; font-size: 16px; color: #805a00;">@TempData["Notification"]</p>
+        </section>
+    }
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5R6S-CrEBanFRL3KXq9I48vUnLytPD9U&callback=initMap" async defer></script>
+
+    <section>
+        <h2>İlgi Alanlarınıza Göre Etkinlikler</h2>
+        @if (Model.Etkinlikler != null && Model.Etkinlikler.Any())
+        {
+            <div class="accordion">
+                @foreach (var etkinlik in Model.Etkinlikler.Where(e => e.IlgiAlanID.HasValue
+               && Model.KullaniciIlgiAlani.Select(k => (int?)k.IlgiAlanID).Contains(e.IlgiAlanID)))
+                {
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion('@etkinlik.ID')">
+                            <h3>@etkinlik.EtkinlikAdi</h3>
+                        </div>
+                        <div id="accordion-content-@etkinlik.ID" class="accordion-content">
+                            <p>@etkinlik.Aciklama</p>
+                            <p><strong>Date:</strong> @etkinlik.Tarih.ToString("dd MMM yyyy")</p>
+                            <p><strong>Time:</strong> @etkinlik.Saat</p>
+                            <div id="map-attended-@etkinlik.ID" style="height: 300px; width: 100%;"></div>
+                            @if (!string.IsNullOrEmpty(Model.Kullanici.Konum) && !string.IsNullOrEmpty(etkinlik.Konum))
+                            {
+                                <p><strong>Location:</strong> @etkinlik.Konum</p>
+                                <p>
+                                    <a href="https://www.google.com/maps/dir/?api=1&origin=@Uri.EscapeDataString(Model.Kullanici.Konum)&destination=@Uri.EscapeDataString(etkinlik.Konum)" target="_blank">
+                                        Get Directions
+                                    </a>
+                                </p>
+                            }
+                            else
+                            {
+                                <p><em>Konum bilgisi eksik olduğundan yol tarifi oluşturulamıyor.</em></p>
+                            }
+
+                            <!-- Button to View Details -->
+                            <a href="@Url.Action("Detaylar", "Event", new { id = etkinlik.ID })" class="btn btn-primary">View Details</a>
+
+                            <!-- Join Event Button -->
+                            <form method="post" action="@Url.Action("JoinEvent", "User")">
+                                @Html.AntiForgeryToken() <!-- This token prevents CSRF attacks -->
+                                <!-- Hidden input for UserID -->
+                                <input type="hidden" name="KullanıcıID" value="@Context.Session.GetInt32("UserID")" />
+
+
+                                <!-- Hidden input for EtkinlikID (Event ID) -->
+                                <input type="hidden" name="EtkinlikID" value="@etkinlik.ID" />
+
+                                <button type="submit" class="btn btn-success">Join Event</button>
+                            </form>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="no-events">You have no events to show based on your interests.</p>
+        }
+    </section>
+
+
+    <section>
+        <h2>Katıldığınız Etkinlikler</h2>
+        @if (Model.Katilimcilar != null && Model.Etkinlikler != null)
+        {
+            var userEvents = Model.Katilimcilar
+            .Where(k => k.KullanıcıID == Model.Kullanici.ID)
+            .Select(k => k.EtkinlikID)
+            .Distinct()
+            .ToList();
+
+            var attendedEvents = Model.Etkinlikler
+            .Where(e => userEvents.Contains(e.ID))
+            .ToList();
+
+            if (attendedEvents.Any())
+            {
+                <div class="accordion">
+                    @foreach (var etkinlik in attendedEvents)
+                    {
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion('attended-@etkinlik.ID')">
+                                <h3>@etkinlik.EtkinlikAdi</h3>
+                            </div>
+                            <div id="accordion-content-attended-@etkinlik.ID" class="accordion-content">
+                                <p>@etkinlik.Aciklama</p>
+                                <p><strong>Date:</strong> @etkinlik.Tarih.ToString("dd MMM yyyy")</p>
+                                <p><strong>Time:</strong> @etkinlik.Saat</p>
+                                <!-- Display Map -->
+                                <div id="map-attended-@etkinlik.ID" style="height: 300px; width: 100%;"></div>
+                                @if (!string.IsNullOrEmpty(Model.Kullanici.Konum) && !string.IsNullOrEmpty(etkinlik.Konum))
+                                {
+                                    <p><strong>Location:</strong> @etkinlik.Konum</p>
+
+                                    <!-- Directions Link -->
+                                    <p>
+                                        <a href="https://www.google.com/maps/dir/?api=1&origin=@Uri.EscapeDataString(Model.Kullanici.Konum)&destination=@Uri.EscapeDataString(etkinlik.Konum)" target="_blank">
+                                            Get Directions
+                                        </a>
+                                    </p>
+
+                                    
+                                }
+                                else
+                                {
+                                    
+                                    <p><em>Unable to generate directions due to missing user location.</em></p>
+                                }
+
+                                <!-- Leave Event Button -->
+                                <form method="post" action="@Url.Action("LeaveEvent", "User")">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="KullanıcıID" value="@Context.Session.GetInt32("UserID")" />
+                                    <input type="hidden" name="EtkinlikID" value="@etkinlik.ID" />
+                                    <button type="submit" class="btn btn-danger">Leave Event</button>
+                                </form>
+
+                                <!-- Sohbet (Chat) Button -->
+                                <a href="@Url.Action("Mesajlar", "Event", new { etkinlikId = etkinlik.ID })" class="btn btn-chat">Sohbete Katıl</a>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="no-events">You have no events you have participated in.</p>
+            }
+        }
+        else
+        {
+            <p class="no-events">No data available to display your participated events.</p>
+        }
+    </section>
+
+
+    <section>
+        <h2>Yeni Etkinlik Oluştur</h2>
+        
+        <a href="@Url.Action("Olustur", "Event")" class="btn-create-event">Etkinlik Oluştur</a>
+    </section>
+
+    <style>
+        .btn-chat {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #17a2b8;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+            .btn-chat:hover {
+                background-color: #138496;
+            }
+        .btn-create-event {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1D2D44;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+            .btn-create-event:hover {
+                background-color: #16334a;
+            }
+
+        section {
+            margin-bottom: 100px; /* Adds a 100px gap below the section */
+        }
+    </style>
+
+</body>
+</html>

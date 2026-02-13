@@ -1,0 +1,233 @@
+﻿@model EventPlannerProject.Models.Etkinlik
+
+@{
+    ViewData["Title"] = "Etkinlik Oluştur";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlik Oluştur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 60%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+            input[type="text"]:focus,
+            input[type="date"]:focus,
+            input[type="time"]:focus,
+            textarea:focus,
+            select:focus {
+                border-color: #0056b3;
+                outline: none;
+            }
+
+        button[type="submit"] {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+            button[type="submit"]:hover {
+                background-color: #004085;
+            }
+
+        .error-list {
+            color: red;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+            .error-list ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .error-list li {
+                margin-bottom: 5px;
+            }
+
+        .select-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+            .select-container select {
+                flex: 1;
+                margin-right: 10px;
+            }
+
+                .select-container select:last-child {
+                    margin-right: 0;
+                }
+
+        .form-actions {
+            text-align: center;
+        }
+
+            .form-actions p {
+                font-size: 14px;
+                color: red;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Etkinlik Oluştur</h1>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error-list">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        @if (Model != null)
+        {
+            <form method="post" asp-action="Olustur">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label for="EtkinlikAdi">Etkinlik Adı:</label>
+                    <input type="text" id="EtkinlikAdi" name="EtkinlikAdi" value="@Model.EtkinlikAdi" required />
+                </div>
+                <div class="form-group">
+                    <label for="Aciklama">Açıklama:</label>
+                    <textarea id="Aciklama" name="Aciklama" required>@Model.Aciklama</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="Tarih">Etkinlik Tarihi:</label>
+                    <input type="date" id="Tarih" name="Tarih" value="@Model.Tarih.ToString("yyyy-MM-dd")" required />
+                </div>
+                <div class="form-group">
+                    <label for="Saat">Etkinlik Zamanı:</label>
+                    <input type="time" id="Saat" name="Saat" value="@Model.Saat.ToString(@"hh\:mm")" required />
+                </div>
+                <div class="form-group">
+                    <label for="EtkinlikSuresi">Etkinlik Süresi:</label>
+                    <input type="number" id="EtkinlikSuresi" name="EtkinlikSuresi" value="@Model.EtkinlikSuresi" min="0" required />
+                </div>
+                <div class="form-group select-container">
+                    <div>
+                        <label for="IlgiAlanID">İlgi Alanı:</label>
+                        <select id="IlgiAlanID" name="IlgiAlanID" asp-for="IlgiAlanID" asp-items="@(new SelectList(ViewData["InterestAreas"] as IEnumerable<SelectListItem>, "Value", "Text", Model.IlgiAlanID))">
+                            <option value="">Select Interest Area</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="KategoriID">Kategori:</label>
+                        <select id="KategoriID" name="KategoriID" asp-for="KategoriID" asp-items="@(new SelectList(ViewData["Categories"] as IEnumerable<SelectListItem>, "Value", "Text", Model.KategoriID))" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Konum">Etkinlik Konumu:</label>
+                    <input type="text" id="Konum" name="Konum" readonly required />
+                    <div id="map" style="height: 400px; width: 100%; margin-top: 10px;"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Etkinliği Oluştur</button>
+                </div>
+            </form>
+
+            <script>
+                function initMap() {
+                    const defaultLocation = { lat: 40.9787, lng: 29.1952 }; // İstanbul konumu
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 12,
+                        center: defaultLocation,
+                    });
+
+                    const marker = new google.maps.Marker({
+                        position: defaultLocation,
+                        map: map,
+                        draggable: true, // İşaretçi sürüklenebilir
+                    });
+
+                    // İşaretçi sürüklendiğinde koordinatları input alanına yaz
+                    google.maps.event.addListener(marker, "dragend", function () {
+                        const position = marker.getPosition();
+                        document.getElementById("Konum").value =
+                            position.lat() + ", " + position.lng();
+                    });
+                }
+            </script>
+            <script async
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5R6S-CrEBanFRL3KXq9I48vUnLytPD9U&callback=initMap">
+            </script>
+            
+
+        }
+        else
+        {
+            <div class="form-actions">
+                <p>Error: Model is null!</p>
+            </div>
+        }
+    </div>
+
+</body>
+
+</html>
+

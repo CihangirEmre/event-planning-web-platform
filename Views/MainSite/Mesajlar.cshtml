@@ -1,0 +1,69 @@
+﻿@model EventPlannerProject.Models.MesajlarViewModel
+
+<div class="chat-container">
+    <h2>@Model.Etkinlik.EtkinlikAdi - Sohbet</h2>
+
+    <div class="chat-messages">
+        @foreach (var mesaj in Model.Mesajlar)
+        {
+            <div class="chat-message">
+                <strong>@mesaj.Gonderici.KullanıcıAdi:</strong>
+                <p>@mesaj.MesajMetni</p>
+                <small>@mesaj.GonderimZamani.ToString("dd/MM/yyyy HH:mm")</small>
+            </div>
+        }
+    </div>
+
+    <form method="post" asp-action="YeniMesaj" asp-route-etkinlikId="@Model.Etkinlik.ID">
+        @Html.AntiForgeryToken()
+        <textarea name="mesajMetni" placeholder="Mesajınızı yazın..." required></textarea>
+        <button type="submit">Gönder</button>
+    </form>
+</div>
+
+<style>
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .chat-messages {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .chat-message {
+        margin-bottom: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+</style>

@@ -1,0 +1,188 @@
+﻿@model EventPlannerProject.Models.Kullanici
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Düzenleme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .background-photo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            z-index: -1;
+            image-rendering: crisp-edges; /* Daha keskin bir görüntü */
+    image-rendering: high-quality;
+        }
+
+        .profile-container {
+            position: relative;
+            max-width: 600px;
+            margin: 5em auto;
+            padding: 2em;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 1em;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .save-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .save-button:hover {
+            background-color: #0056b3;
+        }
+
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin-bottom: 1em;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 1em;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: transparent;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: #f4f4f4;
+                border-color: #bbb;
+                color: #555;
+            }
+
+            .back-button:before {
+                content: "←";
+            }
+    </style>
+</head>
+<body>
+    <!-- Arka plan fotoğrafı -->
+    @if (Model.ProfilFoto != null && Model.ProfilFoto.Length > 0)
+    {
+        <div class="background-photo" style="background-image: url('data:image/jpeg;base64,@Convert.ToBase64String(Model.ProfilFoto)');"></div>
+    }
+
+    <a href="@Url.Action("MainPage", "User")" class="back-button" title="Geri"></a>
+
+
+    <div class="profile-container">
+        <h2>Profil Düzenleme</h2>
+
+        <!-- Başarı veya hata mesajı -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="success-message">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="error-message">@TempData["ErrorMessage"]</div>
+        }
+
+        <form method="post" action="/User/UpdateProfile" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="kullaniciAdi">Kullanıcı Adı:</label>
+                <input type="text" id="kullaniciAdi" name="kullaniciAdi" value="@Model.KullanıcıAdi" maxlength="50" required />
+            </div>
+
+            <div class="form-group">
+                <label for="ad">Ad:</label>
+                <input type="text" id="ad" name="ad" value="@Model.Ad" maxlength="50" required />
+            </div>
+
+            <div class="form-group">
+                <label for="soyAd">Soyad:</label>
+                <input type="text" id="soyAd" name="soyAd" value="@Model.Soyad" maxlength="50" required />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="@Model.Email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="telefonNo">Telefon Numarası:</label>
+                <input type="text" id="telefonNo" name="telefonNo" value="@Model.TelefonNo" maxlength="10" required />
+            </div>
+
+            <div class="form-group">
+                <label for="profilFoto">Profil Fotoğrafı:</label>
+                <input type="file" id="profilFoto" name="profilFoto" accept="image/jpeg" />
+            </div>
+
+            <div class="form-group">
+                <label for="ilgiAlanlari">İlgi Alanları:</label>
+                <div id="ilgiAlanlari">
+                    @foreach (var ilgiAlani in ViewBag.IlgiAlanlari)
+                    {
+                        bool isChecked = Model.IlgiAlanlari.Any(ia => ia.IlgiAlanID == ilgiAlani.ID);
+                        <div>
+                            <input type="checkbox" name="selectedIlgiAlanlari" value="@ilgiAlani.ID" @(isChecked ? "checked" : "") />
+                            <label>@ilgiAlani.IlgiAlanAdi</label>
+                        </div>
+                    }
+                </div>
+            </div>
+           
+            <button type="submit" class="save-button">Kaydet</button>
+        </form>
+    </div>
+</body>
+</html>

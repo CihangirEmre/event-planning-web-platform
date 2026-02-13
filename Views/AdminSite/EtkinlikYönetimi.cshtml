@@ -1,0 +1,158 @@
+﻿@model IEnumerable<dynamic>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlik Yönetimi</title>
+    <style>
+        /* Genel Stil */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f093fb, #f5576c); /* Arka plan geçişi */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            background-color: rgba(255, 255, 255, 0.9); /* Opak kutu */
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        td.actions {
+            text-align: center;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn-approve {
+            background-color: #28a745;
+            margin-right: 5px;
+        }
+
+            .btn-approve:hover {
+                background-color: #218838;
+            }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+            .btn-delete:hover {
+                background-color: #c82333;
+            }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-back:hover {
+                background-color: #0056b3;
+            }
+
+        .no-events {
+            text-align: center;
+            font-size: 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="@Url.Action("AdminPage", "Admin")" class="btn-back">← Geri Dön</a>
+        <h1>Etkinlik Yönetimi</h1>
+
+        @if (!Model.Any())
+        {
+            <p class="no-events">Hiç etkinlik bulunamadı.</p>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Etkinlik Adı</th>
+                        <th>Tarih</th>
+                        <th>Saat</th>
+                        <th>Kategori</th>
+                        <th>İlgi Alanı</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var etkinlik in Model)
+                    {
+                        <tr>
+                            <td>@etkinlik.ID</td>
+                            <td>@etkinlik.EtkinlikAdi</td>
+                            <td>@etkinlik.Tarih.ToString("dd MMM yyyy")</td>
+                            <td>@etkinlik.Saat</td>
+                            <td>@etkinlik.Kategori</td>
+                            <td>@etkinlik.IlgiAlani</td>
+                            <td class="actions">
+                                <form method="post" asp-action="OnaylaEtkinlik" asp-controller="Admin" style="display:inline;">
+                                    <input type="hidden" name="id" value="@etkinlik.ID" />
+                                    <button type="submit" class="btn btn-approve">Onayla</button>
+                                </form>
+                                <form method="post" asp-action="SilEtkinlik" asp-controller="Admin" style="display:inline;">
+                                    <input type="hidden" name="id" value="@etkinlik.ID" />
+                                    <button type="submit" class="btn btn-delete">Sil</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</body>
+</html>
